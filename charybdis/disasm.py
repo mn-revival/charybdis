@@ -18,6 +18,58 @@ def decode_insn(rom: bytes, index: int) -> Optional[DecodedInsn]:
         # NOP
         case 0x00:
             decoded = insn.Insn(name=insn.InsnName.NOP)
+        # LD (BC), A
+        case 0x02:
+            decoded = insn.Insn(name=insn.InsnName.LD, operands=[insn.Indirect(insn.R16.BC), insn.R8.A])
+        # LD B, n
+        case 0x06:
+            size = 2
+            imm = rom[index + 1]
+            decoded = insn.Insn(name=insn.InsnName.LD, operands=[insn.R8.B, insn.U8(imm)])
+        # LD A, (BC)
+        case 0x0A:
+            decoded = insn.Insn(name=insn.InsnName.LD, operands=[insn.R8.A, insn.Indirect(insn.R16.BC)])
+        # LD C, n
+        case 0x0e:
+            size = 2
+            imm = rom[index + 1]
+            decoded = insn.Insn(name=insn.InsnName.LD, operands=[insn.R8.C, insn.U8(imm)])
+        # LD (DE), A
+        case 0x12:
+            decoded = insn.Insn(name=insn.InsnName.LD, operands=[insn.Indirect(insn.R16.DE), insn.R8.A])
+        # LD D, n
+        case 0x16:
+            size = 2
+            imm = rom[index + 1]
+            decoded = insn.Insn(name=insn.InsnName.LD, operands=[insn.R8.D, insn.U8(imm)])
+        # LD A, (DE)
+        case 0x1A:
+            decoded = insn.Insn(name=insn.InsnName.LD, operands=[insn.R8.A, insn.Indirect(insn.R16.DE)])
+        # LD E, n
+        case 0x1e:
+            size = 2
+            imm = rom[index + 1]
+            decoded = insn.Insn(name=insn.InsnName.LD, operands=[insn.R8.E, insn.U8(imm)])
+        # LD H, n
+        case 0x26:
+            size = 2
+            imm = rom[index + 1]
+            decoded = insn.Insn(name=insn.InsnName.LD, operands=[insn.R8.H, insn.U8(imm)])
+        # LD L, n
+        case 0x2e:
+            size = 2
+            imm = rom[index + 1]
+            decoded = insn.Insn(name=insn.InsnName.LD, operands=[insn.R8.L, insn.U8(imm)])
+        # LD [HL], n
+        case 0x36:
+            size = 2
+            imm = rom[index + 1]
+            decoded = insn.Insn(name=insn.InsnName.LD, operands=[insn.R8.HL, insn.U8(imm)])
+        # LD A, n
+        case 0x3e:
+            size = 2
+            imm = rom[index + 1]
+            decoded = insn.Insn(name=insn.InsnName.LD, operands=[insn.R8.A, insn.U8(imm)])
         # LD B, B
         case 0x40: 
             decoded = insn.Insn(name=insn.InsnName.LD, operands=[insn.R8.B, insn.R8.B])
