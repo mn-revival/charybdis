@@ -25,5 +25,7 @@ jobs:
         run: poetry install
       - name: Check syntax
         run: poetry run black --check charybdis tests
+      - name: Check types
+        run: poetry run mypy
       - name: Run tests
         run: poetry run pytest
