@@ -1,7 +1,7 @@
 import argparse
 import pathlib
 
-from charybdis import disasm
+from charybdis import io
 
 
 def get_parser() -> argparse.ArgumentParser:
@@ -17,8 +17,8 @@ def get_parser() -> argparse.ArgumentParser:
 def main() -> None:
     parser = get_parser()
     args = parser.parse_args()
-    disasm.disassemble(
-        disasm.DisassemblerOptions(
+    io.disassemble(
+        io.DisassemblerOptions(
             output_directory_path=pathlib.Path(args.output_directory_path),
             overwrite=args.overwrite,
             rom_file_path=pathlib.Path(args.rom_file_path),

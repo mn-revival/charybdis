@@ -32,7 +32,7 @@ $(GAME) : $(OFILES)
 	$(RGBFIX) $(FIXFLAGS) $@
 	@echo "ORIG: $(MD5)"
 	@echo "GAME: $$(md5sum $(GAME) | awk '{print $$1}')"
-	@if [ "$$(md5sum $(GAME) | awk '{print $$1}')" != "$MD5" ]; then exit 1; fi
+	@(md5sum $(GAME) | grep $(MD5) > /dev/null)
 
 %.o : %.asm
 	$(RGBASM) $(ASMFLAGS) -o $@ $<

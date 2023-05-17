@@ -41,9 +41,7 @@ class DisassemblerState(DisassemblerOptions):
 def disassemble(options: DisassemblerOptions) -> None:
     state = initialize_state(options)
     create_output_directory(state)
-    # TODO: Populate file with data
-    with open(state.output_directory_path / "game.asm", "w") as f:
-        pass
+    write_assembly(state)
     write_makefile(state)
 
 
@@ -75,6 +73,25 @@ def create_output_directory(state: DisassemblerState) -> bool:
         shutil.rmtree(state.output_directory_path)
     state.output_directory_path.mkdir(parents=True, exist_ok=False)
     return True
+
+
+def write_assembly(state: DisassemblerState) -> None:
+    # TODO: Be more intelligent
+    with open(state.output_directory_path / "game.asm", "w") as f:
+        for i, byte in enumerate(state.rom_data):
+            if i % 0x4000 == 0:
+                bank = i // 0x4000
+                start = 0
+                type = "ROM0"
+                options = ""
+                if i != 0:
+                    start = 0x4000
+                    type = "ROMX"
+                    options = f", BANK[${bank:x}]"
+                f.write(
+                    f'SECTION "ROM Bank ${bank:03x}", {type}[${start:x}]{options}\n\n'
+                )
+            f.write(f"DB ${byte:02x}\n")
 
 
 def write_makefile(state: DisassemblerState) -> None:
