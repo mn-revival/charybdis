@@ -5,6 +5,9 @@ description = ""
 authors = ["Forest Belton <forest@homolo.gy>"]
 readme = "README.md"
 
+[tool.poetry.scripts]
+cli = "charybdis.cli:main"
+
 [tool.poetry.dependencies]
 python = "^3.11"
 

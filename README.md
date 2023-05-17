@@ -8,3 +8,8 @@ First, make sure you have Python and [Poetry](https://python-poetry.org/) instal
 $ poetry install
 $ pre-commit install
 ```
+
+To execute the program:
+```
+$ poetry run cli
+```
