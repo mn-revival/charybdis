@@ -28,4 +28,6 @@ jobs:
       - name: Check types
         run: poetry run mypy
       - name: Run tests
-        run: poetry run pytest
+        run: poetry run coverage run -m pytest
+      - name: Check test coverage
+        run: poetry run coverage report --show-missing --fail-under=80 $(find charybdis -type f -name '*.py')
