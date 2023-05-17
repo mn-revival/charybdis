@@ -9,6 +9,8 @@ from typing import Any, TypedDict
 
 import chevron
 
+from charybdis import disasm
+
 FILE_CHUNK_SIZE = 1024  # 1 KB
 MAKEFILE_TEMPLATE_PATH = pathlib.Path("templates/Makefile.mustache")
 
@@ -76,9 +78,10 @@ def create_output_directory(state: DisassemblerState) -> bool:
 
 
 def write_assembly(state: DisassemblerState) -> None:
-    # TODO: Be more intelligent
+    # TODO: Refactor
     with open(state.output_directory_path / "game.asm", "w") as f:
-        for i, byte in enumerate(state.rom_data):
+        i = 0
+        while i < len(state.rom_data):
             if i % 0x4000 == 0:
                 bank = i // 0x4000
                 start = 0
@@ -91,7 +94,14 @@ def write_assembly(state: DisassemblerState) -> None:
                 f.write(
                     f'SECTION "ROM Bank ${bank:03x}", {type}[${start:x}]{options}\n\n'
                 )
-            f.write(f"DB ${byte:02x}\n")
+            result = disasm.decode_insn(state.rom_data, i)
+            if result is not None:
+                size = result.size
+                f.write(f"{result.insn.render()}\n")
+            else:
+                size = 1
+                f.write(f"DB ${state.rom_data[i]:02x}\n")
+            i += size
 
 
 def write_makefile(state: DisassemblerState) -> None:
