@@ -76,7 +76,6 @@ ld [HL], H
 ld [HL], L
 ld [HL], A
 
-; LD A, r
 ld A, B
 ld A, C
 ld A, D
@@ -96,6 +95,7 @@ ld L, $f5
 ld [HL], $f6
 ld A, $f7
 
+; Load indirects
 ld A, [BC]
 ld A, [DE]
 ld [BC], A
