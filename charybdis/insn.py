@@ -83,7 +83,7 @@ class R8(enum.Enum):
     E = "E"
     H = "H"
     L = "L"
-    HL = "(HL)"
+    HL = "[HL]"
 
 
 class R16(enum.Enum):
