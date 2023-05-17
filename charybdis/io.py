@@ -101,6 +101,8 @@ def write_assembly(state: DisassemblerState) -> None:
             else:
                 size = 1
                 f.write(f"DB ${state.rom_data[i]:02x}\n")
+            # NB: Shouldn't write something that spans multiple banks
+            assert (i % 0x4000) < ((i + size) % 0x4000) or size == 1
             i += size
 
 
