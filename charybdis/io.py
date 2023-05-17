@@ -5,11 +5,15 @@ import os.path
 import pathlib
 import shutil
 import typing
-from typing import Any, TypedDict
+from typing import Any, TextIO, TypedDict
 
 import chevron
 
 from charybdis import disasm
+
+ROM_BANK_SIZE = 0x4000  # 16 KiB
+ROM0_BANK_START = 0
+ROMX_BANK_START = 0x4000
 
 FILE_CHUNK_SIZE = 1024  # 1 KB
 MAKEFILE_TEMPLATE_PATH = pathlib.Path("templates/Makefile.mustache")
@@ -73,32 +77,41 @@ def create_output_directory(state: DisassemblerState) -> bool:
 
 
 def write_assembly(state: DisassemblerState) -> None:
-    # TODO: Refactor
-    with open(state.output_directory_path / "game.asm", "w") as f:
-        i = 0
-        while i < len(state.rom_data):
-            if i % 0x4000 == 0:
-                bank = i // 0x4000
-                start = 0
-                type = "ROM0"
-                options = ""
-                if i != 0:
-                    start = 0x4000
-                    type = "ROMX"
-                    options = f", BANK[${bank:x}]"
-                f.write(
-                    f'SECTION "ROM Bank ${bank:03x}", {type}[${start:x}]{options}\n\n'
-                )
-            result = disasm.decode_insn(state.rom_data, i)
-            if result is not None:
-                size = result.size
-                f.write(f"{result.insn.render()}\n")
-            else:
-                size = 1
-                f.write(f"DB ${state.rom_data[i]:02x}\n")
-            # NB: Shouldn't write something that spans multiple banks
-            assert (i % 0x4000) < ((i + size) % 0x4000) or size == 1
-            i += size
+    # TODO: Use ROM header instead of file length
+    num_banks = len(state.rom_data) // 0x4000
+    for bank in range(num_banks):
+        with open(state.output_directory_path / f"bank_{bank:03x}.asm", "w") as f:
+            write_bank(state, f, bank)
+
+
+def get_bank_header(bank: int) -> str:
+    start = ROM0_BANK_START
+    type = "ROM0"
+    options = ""
+    if bank != 0:
+        start = ROMX_BANK_START
+        type = "ROMX"
+        options = f", BANK[${bank:x}]"
+    return f'SECTION "ROM Bank ${bank:03x}", {type}[${start:x}]{options}\n\n'
+
+
+def write_bank(state: DisassemblerState, f: TextIO, bank: int) -> None:
+    f.write(get_bank_header(bank))
+    offset = 0
+    while offset < ROM_BANK_SIZE:
+        index = ROM_BANK_SIZE * bank + offset
+        result = disasm.decode_insn(state.rom_data, index)
+        if result is not None:
+            size = result.size
+            line = result.insn.render()
+        else:
+            size = 1
+            line = f"DB ${state.rom_data[index]:02x}"
+        f.write(line)
+        f.write("\n")
+        # NB: Shouldn't write something that spans multiple banks
+        assert (offset % ROM_BANK_SIZE) < ((offset + size) % ROM_BANK_SIZE) or size == 1
+        offset += size
 
 
 def write_makefile(state: DisassemblerState) -> None:

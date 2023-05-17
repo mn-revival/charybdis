@@ -28,7 +28,7 @@ clean :
 	rm -f $(GAME) $(OFILES) game.sym game.map
 
 $(GAME) : $(OFILES)
-	$(RGBLINK) $(LINKFLAGS) -o $@ $<
+	$(RGBLINK) $(LINKFLAGS) -o $@ $(OFILES)
 	$(RGBFIX) $(FIXFLAGS) $@
 	@echo "ORIG: $(MD5)"
 	@echo "GAME: $$(md5sum $(GAME) | awk '{print $$1}')"
