@@ -1,5 +1,6 @@
 import dataclasses
 import enum
+from typing import Union
 
 
 class InsnName(enum.Enum):
@@ -50,8 +51,42 @@ class InsnName(enum.Enum):
     XOR = "XOR"
 
 
-# TODO: Union with richer types
-InsnOperand = str
+# TODO: More we can do here (addressing modes, etc)
+@dataclasses.dataclass
+class Label:
+    value: str
+
+
+@dataclasses.dataclass
+class U8:
+    value: int
+
+
+@dataclasses.dataclass
+class U16:
+    value: int
+
+
+class Register8(enum.Enum):
+    A = "A"
+    B = "B"
+    C = "C"
+    D = "D"
+    E = "E"
+    H = "H"
+    L = "L"
+    HL = "(HL)"
+
+
+class Register16(enum.Enum):
+    AF = "AF"
+    BC = "BC"
+    DE = "DE"
+    HL = "HL"
+    SP = "SP"
+
+
+InsnOperand = Union[Label, Register8, Register16, U8, U16]
 
 
 @dataclasses.dataclass
@@ -66,5 +101,15 @@ class Insn:
         name = self.name.value.lower()
         operands = ""
         if len(self.operands) > 0:
-            operands = " " + ", ".join(self.operands)
+            operands = " " + ", ".join([render_operand(op) for op in self.operands])
         return f"{name}{operands}"
+
+
+def render_operand(operand: InsnOperand) -> str:
+    if isinstance(operand, Register8):
+        return operand.value.lower()
+    elif isinstance(operand, Register16):
+        return operand.value.lower()
+    elif isinstance(operand, U8) or isinstance(operand, U16):
+        return f"${operand.value:x}"
+    return operand.value
