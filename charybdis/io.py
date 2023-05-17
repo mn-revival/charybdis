@@ -35,10 +35,6 @@ class DisassemblerState(DisassemblerOptions):
     rom_md5: str
     rom_ext: str
 
-    @property
-    def makefile_data(self) -> MakefileData:
-        return {"rom_ext": self.rom_ext, "rom_md5": self.rom_md5}
-
 
 def disassemble(options: DisassemblerOptions) -> None:
     state = initialize_state(options)
@@ -57,20 +53,19 @@ def initialize_state(options: DisassemblerOptions) -> DisassemblerState:
             rom_data.extend(chunk)
             rom_md5.update(chunk)
             done = len(chunk) < FILE_CHUNK_SIZE
-    state = DisassemblerState(
+    return DisassemblerState(
         **dataclasses.asdict(options),
         rom_data=bytes(rom_data),
         rom_md5=rom_md5.hexdigest(),
         # TODO: Use ROM header instead of file extension
         rom_ext=options.rom_file_path.suffix,
     )
-    return state
 
 
 def create_output_directory(state: DisassemblerState) -> bool:
     if os.path.exists(state.output_directory_path):
         if not state.overwrite:
-            logging.warn("output directory exists but overwrite not enabled")
+            logging.warning("output directory exists but overwrite not enabled")
             return False
         shutil.rmtree(state.output_directory_path)
     state.output_directory_path.mkdir(parents=True, exist_ok=False)
@@ -111,7 +106,8 @@ def write_makefile(state: DisassemblerState) -> None:
     with open(MAKEFILE_TEMPLATE_PATH, "r") as f:
         # NB: TypedDict is not a subtype of dict[str, Any] so cast
         #     https://github.com/python/mypy/issues/4976
-        data = typing.cast(dict[str, Any], state.makefile_data)
+        makefile_data = {"rom_ext": state.rom_ext, "rom_md5": state.rom_md5}
+        data = typing.cast(dict[str, Any], makefile_data)
         makefile = chevron.render(f, data)
     with open(makefile_path, "w") as f:
         f.write(makefile)
