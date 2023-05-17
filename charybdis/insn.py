@@ -96,7 +96,13 @@ class R16(enum.Enum):
     SP = "SP"
 
 
-InsnOperand = Union[Label, R8, R16, U8, U16]
+@dataclasses.dataclass
+class Indirect:
+    """Indirect addressing mode via 16-bit register"""
+    reg: R16
+
+
+InsnOperand = Union[Label, R8, R16, U8, U16, Indirect]
 
 
 @dataclasses.dataclass
@@ -122,4 +128,6 @@ def render_operand(operand: InsnOperand) -> str:
         return operand.value.lower()
     elif isinstance(operand, U8) or isinstance(operand, U16):
         return f"${operand.value:x}"
+    elif isinstance(operand, Indirect):
+        return f"[{render_operand(operand.reg)}]"
     return operand.value
