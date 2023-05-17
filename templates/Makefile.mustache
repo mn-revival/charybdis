@@ -1,0 +1,38 @@
+RGBASM ?= rgbasm
+RGBFIX ?= rgbfix
+RGBLINK ?= rgblink
+
+GAME = game{{rom_ext}}
+MD5 = {{rom_md5}}
+
+ASMFLAGS ?= \
+    --preserve-ld \
+    --nop-after-halt
+
+LINKFLAGS ?= \
+    --sym game.sym \
+    --map game.map
+
+FIXFLAGS ?= \
+    --validate \
+    --pad-value 255
+
+SFILES := $(shell find . -type f -name '*.asm')
+OFILES := $(SFILES:%.asm=%.o)
+
+.PHONY : all clean
+
+all : $(GAME)
+
+clean :
+	rm -f $(GAME) $(OFILES) game.sym game.map
+
+$(GAME) : $(OFILES)
+	$(RGBLINK) $(LINKFLAGS) -o $@ $<
+	$(RGBFIX) $(FIXFLAGS) $@
+	@echo "ORIG: $(MD5)"
+	@echo "GAME: $$(md5sum $(GAME) | awk '{print $$1}')"
+	@if [ "$$(md5sum $(GAME) | awk '{print $$1}')" != "$MD5" ]; then exit 1; fi
+
+%.o : %.asm
+	$(RGBASM) $(ASMFLAGS) -o $@ $<
