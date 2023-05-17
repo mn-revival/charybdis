@@ -2,7 +2,7 @@ from charybdis import insn
 
 
 def test_insn__render() -> None:
-    ld = insn.Insn(name=insn.InsnName.LD, operands=["a", "b"])
+    ld = insn.Insn(name=insn.InsnName.LD, operands=[insn.R8.A, insn.R8.B])
     assert "ld a, b" == ld.render()
 
 

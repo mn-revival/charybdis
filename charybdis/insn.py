@@ -54,20 +54,28 @@ class InsnName(enum.Enum):
 # TODO: More we can do here (addressing modes, etc)
 @dataclasses.dataclass
 class Label:
+    """Reference to a location or value"""
+
     value: str
 
 
 @dataclasses.dataclass
 class U8:
+    """8-bit unsigned integer"""
+
     value: int
 
 
 @dataclasses.dataclass
 class U16:
+    """16-bit unsigned integer"""
+
     value: int
 
 
-class Register8(enum.Enum):
+class R8(enum.Enum):
+    """8-bit register"""
+
     A = "A"
     B = "B"
     C = "C"
@@ -78,7 +86,9 @@ class Register8(enum.Enum):
     HL = "(HL)"
 
 
-class Register16(enum.Enum):
+class R16(enum.Enum):
+    """16-bit register"""
+
     AF = "AF"
     BC = "BC"
     DE = "DE"
@@ -86,7 +96,7 @@ class Register16(enum.Enum):
     SP = "SP"
 
 
-InsnOperand = Union[Label, Register8, Register16, U8, U16]
+InsnOperand = Union[Label, R8, R16, U8, U16]
 
 
 @dataclasses.dataclass
@@ -106,9 +116,9 @@ class Insn:
 
 
 def render_operand(operand: InsnOperand) -> str:
-    if isinstance(operand, Register8):
+    if isinstance(operand, R8):
         return operand.value.lower()
-    elif isinstance(operand, Register16):
+    elif isinstance(operand, R16):
         return operand.value.lower()
     elif isinstance(operand, U8) or isinstance(operand, U16):
         return f"${operand.value:x}"
