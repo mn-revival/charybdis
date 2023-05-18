@@ -106,8 +106,8 @@ ld A, [$f0]
 ld [$f0], A
 
 ; Load accumulator/indirect 8 bit
-ld A, [C]
-ld [C], A
+ldh A, [C]
+ldh [C], A
 
 ; load indirect, increment/decrement
 ld A, [HL-]
