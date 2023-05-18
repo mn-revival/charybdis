@@ -157,7 +157,7 @@ def render_operand(operand: InsnOperand) -> str:
         return operand.value.lower()
     elif isinstance(operand, U8) or isinstance(operand, U16):
         return f"${operand.value:x}"
-    elif isinstance(operand, DirectU16):
+    elif isinstance(operand, DirectU8):
         return f"[{render_operand(operand.offset)}]"
     elif isinstance(operand, DirectU16):
         return f"[{render_operand(operand.offset)}]"
@@ -166,7 +166,8 @@ def render_operand(operand: InsnOperand) -> str:
     elif isinstance(operand, IndirectR16):
         return f"[{render_operand(operand.reg)}]"
     elif isinstance(operand, IndirectHLIncr):
-        return f"[{render_operand(R8.HL)}+]"
+        print(render_operand(R8.HL))
+        return f"[hl+]"
     elif isinstance(operand, IndirectHLDecr):
-        return f"[{render_operand(R8.HL)}-]"
+        return f"[hl-]"
     return operand.value
