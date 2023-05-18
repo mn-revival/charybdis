@@ -292,7 +292,8 @@ def decode_insn(rom: bytes, index: int) -> Optional[DecodedInsn]:
             size = 2
             offset = rom[index + 1]
             decoded = insn.Insn(
-                name=insn.InsnName.LDH, operands=[insn.DirectU8(offset), insn.R8.A]
+                name=insn.InsnName.LDH,
+                operands=[insn.DirectU8(insn.U8(offset)), insn.R8.A],
             )
         # LDH (C), A
         case 0xE2:
@@ -312,7 +313,8 @@ def decode_insn(rom: bytes, index: int) -> Optional[DecodedInsn]:
             size = 2
             offset = rom[index + 1]
             decoded = insn.Insn(
-                name=insn.InsnName.LDH, operands=[insn.R8.A, insn.DirectU8(offset)]
+                name=insn.InsnName.LDH,
+                operands=[insn.R8.A, insn.DirectU8(insn.U8(offset))],
             )
         # LDH A, (C)
         case 0xF2:
