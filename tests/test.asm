@@ -95,8 +95,22 @@ ld L, $f5
 ld [HL], $f6
 ld A, $f7
 
-; Load indirects
+; Load accumulator/indirect 16 bit
 ld A, [BC]
 ld A, [DE]
 ld [BC], A
 ld [DE], A
+
+; Load accumulator/direct
+ld A, [$f0]
+ld [$f0], A
+
+; Load accumulator/indirect 8 bit
+ld A, [C]
+ld [C], A
+
+; load indirect, increment/decrement
+ld A, [HL-]
+ld [HL-], A
+ld A, [HL+]
+ld [HL+], A
