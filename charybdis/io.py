@@ -11,9 +11,15 @@ import chevron
 
 from charybdis import disasm
 
+OFFSET_CGB_FLAG = 0x0143
+OFFSET_ROM_SIZE = 0x0148
+
 ROM_BANK_SIZE = 0x4000  # 16 KiB
 ROM0_BANK_START = 0
 ROMX_BANK_START = 0x4000
+
+EXTENSION_GB = ".gb"
+EXTENSION_GBC = ".gbc"
 
 FILE_CHUNK_SIZE = 1024  # 1 KB
 MAKEFILE_TEMPLATE_PATH = pathlib.Path("templates/Makefile.mustache")
@@ -35,9 +41,10 @@ class MakefileData(TypedDict):
 
 @dataclasses.dataclass
 class DisassemblerState(DisassemblerOptions):
+    rom_banks: int
     rom_data: bytes
     rom_md5: str
-    rom_ext: str
+    is_gbc: bool
 
 
 def disassemble(options: DisassemblerOptions) -> None:
@@ -59,10 +66,10 @@ def initialize_state(options: DisassemblerOptions) -> DisassemblerState:
             done = len(chunk) < FILE_CHUNK_SIZE
     return DisassemblerState(
         **dataclasses.asdict(options),
+        is_gbc=(rom_data[OFFSET_CGB_FLAG] & 0x80) > 0,
+        rom_banks=2 << rom_data[OFFSET_ROM_SIZE],
         rom_data=bytes(rom_data),
         rom_md5=rom_md5.hexdigest(),
-        # TODO: Use ROM header instead of file extension
-        rom_ext=options.rom_file_path.suffix,
     )
 
 
@@ -77,9 +84,7 @@ def create_output_directory(state: DisassemblerState) -> bool:
 
 
 def write_assembly(state: DisassemblerState) -> None:
-    # TODO: Use ROM header instead of file length
-    num_banks = len(state.rom_data) // 0x4000
-    for bank in range(num_banks):
+    for bank in range(state.rom_banks):
         with open(state.output_directory_path / f"bank_{bank:03x}.asm", "w") as f:
             write_bank(state, f, bank)
 
@@ -119,7 +124,10 @@ def write_makefile(state: DisassemblerState) -> None:
     with open(MAKEFILE_TEMPLATE_PATH, "r") as f:
         # NB: TypedDict is not a subtype of dict[str, Any] so cast
         #     https://github.com/python/mypy/issues/4976
-        makefile_data = {"rom_ext": state.rom_ext, "rom_md5": state.rom_md5}
+        makefile_data = {
+            "rom_ext": EXTENSION_GBC if state.is_gbc else EXTENSION_GB,
+            "rom_md5": state.rom_md5,
+        }
         data = typing.cast(dict[str, Any], makefile_data)
         makefile = chevron.render(f, data)
     with open(makefile_path, "w") as f:
