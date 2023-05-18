@@ -99,7 +99,7 @@ class R16(enum.Enum):
 
 @dataclasses.dataclass
 class DirectU8:
-    """Direct addressing mode via 16-bit integer"""
+    """Direct addressing mode via 8-bit integer"""
     offset: U8
     
 

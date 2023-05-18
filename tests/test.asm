@@ -102,8 +102,8 @@ ld [BC], A
 ld [DE], A
 
 ; Load accumulator/direct
-ld A, [$f0]
-ld [$f0], A
+ld A, [$f0a1]
+ld [$f0a1], A
 
 ; Load accumulator/indirect 8 bit
 ldh A, [C]
