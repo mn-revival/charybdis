@@ -23,6 +23,7 @@ class InsnName(enum.Enum):
     JP = "JP"
     JR = "JR"
     LD = "LD"
+    LDH = "LDH"
     OR = "OR"
     NOP = "NOP"
     POP = "POP"
@@ -104,13 +105,57 @@ class R16(enum.Enum):
 
 
 @dataclasses.dataclass
-class Indirect:
+class DirectU8:
+    """Direct addressing mode via 8-bit integer"""
+
+    offset: U8
+
+
+@dataclasses.dataclass
+class DirectU16:
+    """Direct addressing mode via 16-bit integer"""
+
+    offset: U16
+
+
+@dataclasses.dataclass
+class IndirectR8:
+    """Indirect addressing mode via 8-bit register"""
+
+    reg: R8
+
+
+@dataclasses.dataclass
+class IndirectR16:
     """Indirect addressing mode via 16-bit register"""
 
     reg: R16
 
 
-InsnOperand = Union[Label, R8, R16, U3, U8, U16, Indirect]
+@dataclasses.dataclass
+class IndirectHLIncr:
+    """Indirect addressing mode via HL with increment"""
+
+
+@dataclasses.dataclass
+class IndirectHLDecr:
+    """Indirect addressing mode via HL with decrement"""
+
+
+InsnOperand = Union[
+    Label,
+    R8,
+    R16,
+    U3,
+    U8,
+    U16,
+    DirectU8,
+    DirectU16,
+    IndirectR8,
+    IndirectR16,
+    IndirectHLIncr,
+    IndirectHLDecr,
+]
 
 
 @dataclasses.dataclass
@@ -136,6 +181,17 @@ def render_operand(operand: InsnOperand) -> str:
         return operand.value.lower()
     elif isinstance(operand, U3) or isinstance(operand, U8) or isinstance(operand, U16):
         return f"${operand.value:x}"
-    elif isinstance(operand, Indirect):
+    elif isinstance(operand, DirectU8):
+        return f"[{render_operand(operand.offset)}]"
+    elif isinstance(operand, DirectU16):
+        return f"[{render_operand(operand.offset)}]"
+    elif isinstance(operand, IndirectR8):
         return f"[{render_operand(operand.reg)}]"
+    elif isinstance(operand, IndirectR16):
+        return f"[{render_operand(operand.reg)}]"
+    elif isinstance(operand, IndirectHLIncr):
+        print(render_operand(R8.HL))
+        return f"[hl+]"
+    elif isinstance(operand, IndirectHLDecr):
+        return f"[hl-]"
     return operand.value

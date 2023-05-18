@@ -18,10 +18,11 @@ def decode_insn(rom: bytes, index: int) -> Optional[DecodedInsn]:
         # NOP
         case 0x00:
             decoded = insn.Insn(name=insn.InsnName.NOP)
-        # LD (BC), A
+        # LD [BC], A
         case 0x02:
             decoded = insn.Insn(
-                name=insn.InsnName.LD, operands=[insn.Indirect(insn.R16.BC), insn.R8.A]
+                name=insn.InsnName.LD,
+                operands=[insn.IndirectR16(insn.R16.BC), insn.R8.A],
             )
         # LD B, n
         case 0x06:
@@ -33,7 +34,8 @@ def decode_insn(rom: bytes, index: int) -> Optional[DecodedInsn]:
         # LD A, (BC)
         case 0x0A:
             decoded = insn.Insn(
-                name=insn.InsnName.LD, operands=[insn.R8.A, insn.Indirect(insn.R16.BC)]
+                name=insn.InsnName.LD,
+                operands=[insn.R8.A, insn.IndirectR16(insn.R16.BC)],
             )
         # LD C, n
         case 0x0E:
@@ -45,7 +47,8 @@ def decode_insn(rom: bytes, index: int) -> Optional[DecodedInsn]:
         # LD (DE), A
         case 0x12:
             decoded = insn.Insn(
-                name=insn.InsnName.LD, operands=[insn.Indirect(insn.R16.DE), insn.R8.A]
+                name=insn.InsnName.LD,
+                operands=[insn.IndirectR16(insn.R16.DE), insn.R8.A],
             )
         # LD D, n
         case 0x16:
@@ -57,7 +60,8 @@ def decode_insn(rom: bytes, index: int) -> Optional[DecodedInsn]:
         # LD A, (DE)
         case 0x1A:
             decoded = insn.Insn(
-                name=insn.InsnName.LD, operands=[insn.R8.A, insn.Indirect(insn.R16.DE)]
+                name=insn.InsnName.LD,
+                operands=[insn.R8.A, insn.IndirectR16(insn.R16.DE)],
             )
         # LD E, n
         case 0x1E:
@@ -283,5 +287,47 @@ def decode_insn(rom: bytes, index: int) -> Optional[DecodedInsn]:
         # LD A, A
         case 0x7F:
             decoded = insn.Insn(name=insn.InsnName.LD, operands=[insn.R8.A, insn.R8.A])
+        # LDH [n], A
+        case 0xE0:
+            size = 2
+            offset = rom[index + 1]
+            decoded = insn.Insn(
+                name=insn.InsnName.LDH,
+                operands=[insn.DirectU8(insn.U8(offset)), insn.R8.A],
+            )
+        # LDH (C), A
+        case 0xE2:
+            decoded = insn.Insn(
+                name=insn.InsnName.LDH, operands=[insn.IndirectR8(insn.R8.C), insn.R8.A]
+            )
+        # LD [nn], A
+        case 0xEA:
+            size = 3
+            addr = rom[index + 1] + (rom[index + 2] << 8)
+            decoded = insn.Insn(
+                name=insn.InsnName.LD,
+                operands=[insn.DirectU16(insn.U16(addr)), insn.R8.A],
+            )
+        # LDH A, [n]
+        case 0xF0:
+            size = 2
+            offset = rom[index + 1]
+            decoded = insn.Insn(
+                name=insn.InsnName.LDH,
+                operands=[insn.R8.A, insn.DirectU8(insn.U8(offset))],
+            )
+        # LDH A, (C)
+        case 0xF2:
+            decoded = insn.Insn(
+                name=insn.InsnName.LDH, operands=[insn.R8.A, insn.IndirectR8(insn.R8.C)]
+            )
+        # LD A, [nn]
+        case 0xFA:
+            size = 3
+            addr = rom[index + 1] + (rom[index + 2] << 8)
+            decoded = insn.Insn(
+                name=insn.InsnName.LD,
+                operands=[insn.R8.A, insn.DirectU16(insn.U16(addr))],
+            )
 
     return DecodedInsn(insn=decoded, size=size) if decoded is not None else None
