@@ -110,7 +110,7 @@ class Indirect:
     reg: R16
 
 
-InsnOperand = Union[Label, R8, R16, U8, U16, Indirect]
+InsnOperand = Union[Label, R8, R16, U3, U8, U16, Indirect]
 
 
 @dataclasses.dataclass
