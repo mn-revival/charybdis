@@ -122,13 +122,16 @@ class IndirectR16:
 
 
 @dataclasses.dataclass
-class IndirectR16Index:
-    """Indirect addressing mode via 16-bit register with increment"""
-    reg: R16
-    increment: bool
+class IndirectHLIncr:
+    """Indirect addressing mode via HL with increment"""
 
 
-InsnOperand = Union[Label, R8, R16, U8, U16, DirectU8, DirectU16, IndirectR8, IndirectR16, IndirectR16Index]
+@dataclasses.dataclass
+class IndirectHLDecr:
+    """Indirect addressing mode via HL with decrement"""
+
+
+InsnOperand = Union[Label, R8, R16, U8, U16, DirectU8, DirectU16, IndirectR8, IndirectR16, IndirectHLIncr, IndirectHLDecr]
 
 
 @dataclasses.dataclass
@@ -162,10 +165,8 @@ def render_operand(operand: InsnOperand) -> str:
         return f"[{render_operand(operand.reg)}]"
     elif isinstance(operand, IndirectR16):
         return f"[{render_operand(operand.reg)}]"
-    elif isinstance(operand, IndirectR16Index):
-        if operand.increment:
-            index = '+'
-        else:
-            index = '-'
-        return f"[{render_operand(operand.reg)}{index}]"
+    elif isinstance(operand, IndirectHLIncr):
+        return f"[{render_operand(R8.HL)}+]"
+    elif isinstance(operand, IndirectHLDecr):
+        return f"[{render_operand(R8.HL)}-]"
     return operand.value
