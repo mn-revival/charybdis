@@ -1,5 +1,5 @@
 # charybdis
-<img src="./gillray-james-britannia.jpg" style="margin-bottom:1rem" alt="Britannia Between Scylla and Charybdis, James Gillray, 1793">
+<img src="./britannia-cropped.jpg" style="margin-bottom:1rem" alt="Britannia Between Scylla and Charybdis, James Gillray, 1793">
 
 ## Type-aware disassembler for Game Boy / Game Boy Color
 
