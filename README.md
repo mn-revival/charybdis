@@ -5,7 +5,7 @@ Type-aware disassembler for Game Boy / Game Boy Color
 
 ### Differences from `mgbdis`
 This software is inspired by [mattcurie/mgbdis](https://github.com/mattcurie/mgbdis) and should be helpful in similar situations. However, there are some key differences:
-* No use of RGBDS symbol format. By using a more expressive alternative, a variety of primitive (and complex) types are supported.
+* No use of RGBDS symbol format. By using a more expressive alternative a variety of primitive (and complex) types are supported.
 * RAM can be annotated.
 
 ## Installation
@@ -29,7 +29,7 @@ options:
 ```
 
 ### Building the ROM
-Once you have generated a source tree navigate to the source tree and run `make`. The MD5 hash of the built ROM is compared against the original to validate a correct disassembly.
+Once you have generated a source tree, navigate to the source tree and run `make`. The MD5 hash of the built ROM is compared against the original to validate a correct disassembly.
 
 ## Development
 Install the following:
