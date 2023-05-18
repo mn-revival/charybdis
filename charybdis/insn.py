@@ -99,6 +99,7 @@ class R16(enum.Enum):
 @dataclasses.dataclass
 class Indirect:
     """Indirect addressing mode via 16-bit register"""
+
     reg: R16
 
 
