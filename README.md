@@ -1,5 +1,7 @@
 # charybdis
-Type-aware disassembler for Game Boy / Game Boy Color
+<img src="./gillray-james-britannia.jpg" style="margin-bottom:1rem" alt="Britannia Between Scylla and Charybdis, James Gillray, 1793">
+
+Type-aware disassembler for Game Boy / Game Boy
 
 `charybdis` converts ROM files into a [RGBDS](https://rgbds.gbdev.io/)-compatible source tree with a [Makefile](https://www.gnu.org/software/make/). Building the project produces a ROM which is identical to what `charybdis` was given. If a symbol table is provided it is used to annotate the source tree.
 
