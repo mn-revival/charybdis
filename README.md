@@ -1,7 +1,7 @@
 # charybdis
 Type-aware disassembler for Game Boy / Game Boy Color
 
-`charybdis` converts ROM files into a RGBDS-compatible source tree with a Makefile. Building the project produces a ROM which is identical to what `charybdis` was given. If a symbol table is provided, it is used to annotate the source tree.
+`charybdis` converts ROM files into a [RGBDS](https://rgbds.gbdev.io/)-compatible source tree with a [Makefile](https://www.gnu.org/software/make/). Building the project produces a ROM which is identical to what `charybdis` was given. If a symbol table is provided it is used to annotate the source tree.
 
 ### Differences from `mgbdis`
 This software is inspired by [mattcurie/mgbdis](https://github.com/mattcurie/mgbdis) and should be helpful in similar situations. However, there are some key differences:
@@ -28,15 +28,23 @@ options:
                         do/don't overwrite output directory
 ```
 
-## Development
-First, make sure you have Python and [Poetry](https://python-poetry.org/) installed. Then, run:
+### Building the ROM
+Once you have generated a source tree navigate to the source tree and run `make`. The MD5 hash of the built ROM is compared against the original to validate a correct disassembly.
 
+## Development
+Install the following:
+* GNU Make
+* Python 3.11 or higher
+* [Poetry](https://python-poetry.org/)
+* RGBDS
+
+Then, run:
 ```
 $ poetry install
 $ pre-commit install
 ```
 
-To execute the program:
+To execute `charybdis`:
 ```
 $ poetry run cli
 ```
