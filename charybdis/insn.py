@@ -100,24 +100,28 @@ class R16(enum.Enum):
 @dataclasses.dataclass
 class DirectU8:
     """Direct addressing mode via 8-bit integer"""
+
     offset: U8
-    
+
 
 @dataclasses.dataclass
 class DirectU16:
     """Direct addressing mode via 16-bit integer"""
+
     offset: U16
 
 
 @dataclasses.dataclass
 class IndirectR8:
     """Indirect addressing mode via 8-bit register"""
+
     reg: R8
 
 
 @dataclasses.dataclass
 class IndirectR16:
     """Indirect addressing mode via 16-bit register"""
+
     reg: R16
 
 
@@ -131,7 +135,19 @@ class IndirectHLDecr:
     """Indirect addressing mode via HL with decrement"""
 
 
-InsnOperand = Union[Label, R8, R16, U8, U16, DirectU8, DirectU16, IndirectR8, IndirectR16, IndirectHLIncr, IndirectHLDecr]
+InsnOperand = Union[
+    Label,
+    R8,
+    R16,
+    U8,
+    U16,
+    DirectU8,
+    DirectU16,
+    IndirectR8,
+    IndirectR16,
+    IndirectHLIncr,
+    IndirectHLDecr,
+]
 
 
 @dataclasses.dataclass
