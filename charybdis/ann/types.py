@@ -1,6 +1,6 @@
 import dataclasses
 import enum
-from typing import Union
+from typing import Optional, Union
 
 
 @dataclasses.dataclass
@@ -32,4 +32,4 @@ class PointerType:
 class Ann:
     addr: BankAddr
     label: str
-    type: AnnType
+    type: Optional[AnnType]

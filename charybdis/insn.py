@@ -61,6 +61,13 @@ class Label:
 
 
 @dataclasses.dataclass
+class U3:
+    """3-bit unsigned integer"""
+
+    value: int
+
+
+@dataclasses.dataclass
 class U8:
     """8-bit unsigned integer"""
 
@@ -139,6 +146,7 @@ InsnOperand = Union[
     Label,
     R8,
     R16,
+    U3,
     U8,
     U16,
     DirectU8,
@@ -171,7 +179,7 @@ def render_operand(operand: InsnOperand) -> str:
         return operand.value.lower()
     elif isinstance(operand, R16):
         return operand.value.lower()
-    elif isinstance(operand, U8) or isinstance(operand, U16):
+    elif isinstance(operand, U3) or isinstance(operand, U8) or isinstance(operand, U16):
         return f"${operand.value:x}"
     elif isinstance(operand, DirectU8):
         return f"[{render_operand(operand.offset)}]"

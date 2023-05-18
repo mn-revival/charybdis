@@ -18,15 +18,15 @@ def test_create_output_directory__exists() -> None:
 
 def test_create_output_directory__overwrite() -> None:
     with tempfile.TemporaryDirectory() as dir:
-        created = io.create_output_directory(_create_state(dir))
+        created = io.create_output_directory(_create_state(dir, overwrite=True))
     assert created
 
 
-def _create_state(dir: str) -> io.DisassemblerState:
+def _create_state(dir: str, overwrite: bool = False) -> io.DisassemblerState:
     return io.DisassemblerState(
         is_gbc=False,
         output_directory_path=pathlib.Path(dir),
-        overwrite=True,
+        overwrite=overwrite,
         rom_banks=2,
         rom_data=bytes(),
         rom_file_path=pathlib.Path("/"),
