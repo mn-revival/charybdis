@@ -24,6 +24,7 @@ def test_create_output_directory__overwrite() -> None:
 
 def _create_state(dir: str, overwrite: bool = False) -> io.DisassemblerState:
     return io.DisassemblerState(
+        anns=[],
         is_gbc=False,
         output_directory_path=pathlib.Path(dir),
         overwrite=overwrite,
