@@ -114,3 +114,19 @@ ld A, [HL-]
 ld [HL-], A
 ld A, [HL+]
 ld [HL+], A
+
+; 16-bit transfers
+ld BC, $1234
+ld DE, $5678
+ld HL, $abcd
+ld SP, $12ab
+ld [$1234], SP
+ld SP, HL
+push BC
+push DE
+push HL
+push AF
+pop BC
+pop DE
+pop HL
+pop AF
