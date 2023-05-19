@@ -30,7 +30,6 @@ logger = logging.getLogger(__name__)
 
 @dataclasses.dataclass
 class DisassemblerOptions:
-    anns: list[ann_types.Ann]
     output_directory_path: pathlib.Path
     rom_file_path: pathlib.Path
     overwrite: bool
@@ -43,6 +42,7 @@ class MakefileData(TypedDict):
 
 @dataclasses.dataclass
 class DisassemblerState(DisassemblerOptions):
+    anns: list[ann_types.Ann]
     rom_banks: int
     rom_data: bytes
     rom_md5: str
