@@ -126,6 +126,8 @@ def test_decode_insn__u3_r8(
 
 
 def test_disassembly_correspondence() -> None:
+    section_name = "ROM Bank $000"
+
     def disassemble(code: bytes) -> str:
         offset = 0
         text = ""
@@ -135,7 +137,7 @@ def test_disassembly_correspondence() -> None:
             text += result.insn.render()
             text += "\n"
             offset += result.size
-        header = 'SECTION "ROM Bank $000", ROM0[$150]\n'
+        header = f'SECTION "{section_name}", ROM0[$150]\n'
         return header + text
 
     def assemble(asm: str) -> bytes:
@@ -158,13 +160,20 @@ def test_disassembly_correspondence() -> None:
         process.stdin.write(asm.encode("utf-8"))
         process.stdin.close()
 
-        # These indexes are fixed to the length of the section header name.
         obj: bytes = process.stdout.read()
+
+        # Section size is located 0x14 (length of headers) + length of name + 1 (null terminator)
+        size_index = 0x14 + len(section_name) + 1
         section_size = (
-            obj[0x22] + (obj[0x23] << 8) + (obj[0x24] << 16) + (obj[0x25] << 24)
+            obj[size_index]
+            + (obj[size_index + 1] << 8)
+            + (obj[size_index + 2] << 16)
+            + (obj[size_index + 3] << 24)
         )
 
-        return obj[0x34 : (0x34 + section_size)]
+        code_index = size_index + 18
+
+        return obj[code_index : (code_index + section_size)]
 
     with open("tests/test.asm", "r") as f:
         asm = f.read()
