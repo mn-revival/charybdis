@@ -1,4 +1,4 @@
-from typing import Any, Callable, Optional, TextIO
+from typing import Any, Callable, IO, Optional
 
 import pyparsing as pp
 
@@ -77,5 +77,5 @@ def parse_ann(line: str) -> types.Ann:
     return ann.parse_string(line, parse_all=True)[0]  # type: ignore
 
 
-def parse_ann_file(f: TextIO) -> list[types.Ann]:
+def parse_ann_file(f: IO[str]) -> list[types.Ann]:
     return [parse_ann(line.strip()) for line in f]
