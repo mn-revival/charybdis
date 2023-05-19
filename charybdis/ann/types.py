@@ -5,6 +5,8 @@ from typing import Optional, Union
 
 @dataclasses.dataclass
 class BankAddr:
+    """A unique location in addressable memory"""
+
     bank: int
     addr: int
 
@@ -30,6 +32,19 @@ class PointerType:
 
 @dataclasses.dataclass
 class Ann:
+    """Optionally typed label at a specific address"""
+
     addr: BankAddr
     label: str
     type: Optional[AnnType]
+
+
+def ann(bank: int, addr: int, label: str, type: Optional[AnnType] = None) -> Ann:
+    assert bank >= 0 and bank <= 0x1FF
+    assert addr >= addr <= 0xFFFF
+    assert len(label) > 0
+    return Ann(
+        addr=BankAddr(bank=bank, addr=addr),
+        label=label,
+        type=type,
+    )
