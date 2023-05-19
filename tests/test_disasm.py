@@ -157,6 +157,9 @@ def test_disassembly_correspondence() -> None:
             stdout=subprocess.PIPE,
         )
 
+        assert process.stdin is not None
+        assert process.stdout is not None
+
         process.stdin.write(asm.encode("utf-8"))
         process.stdin.close()
 

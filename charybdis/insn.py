@@ -190,7 +190,6 @@ def render_operand(operand: InsnOperand) -> str:
     elif isinstance(operand, IndirectR16):
         return f"[{render_operand(operand.reg)}]"
     elif isinstance(operand, IndirectHLIncr):
-        print(render_operand(R8.HL))
         return f"[hl+]"
     elif isinstance(operand, IndirectHLDecr):
         return f"[hl-]"
