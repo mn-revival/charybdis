@@ -93,12 +93,22 @@ def decode_insn(rom: bytes, index: int) -> Optional[DecodedInsn]:
             size = 3
             imm16 = load_u16(rom, index + 1)
             decoded = insn.Insn(name=insn.InsnName.LD, operands=[insn.R16.HL, imm16])
+        # LD [HL+], A
+        case 0x22:
+            decoded = insn.Insn(
+                name=insn.InsnName.LD, operands=[insn.IndirectHLIncr(), insn.R8.A]
+            )
         # LD H, n
         case 0x26:
             size = 2
             imm = rom[index + 1]
             decoded = insn.Insn(
                 name=insn.InsnName.LD, operands=[insn.R8.H, insn.U8(imm)]
+            )
+        # LD A, [HL+]
+        case 0x2A:
+            decoded = insn.Insn(
+                name=insn.InsnName.LD, operands=[insn.R8.A, insn.IndirectHLIncr()]
             )
         # LD L, n
         case 0x2E:
@@ -112,12 +122,22 @@ def decode_insn(rom: bytes, index: int) -> Optional[DecodedInsn]:
             size = 3
             imm16 = load_u16(rom, index + 1)
             decoded = insn.Insn(name=insn.InsnName.LD, operands=[insn.R16.SP, imm16])
+        # LD [HL-], A
+        case 0x32:
+            decoded = insn.Insn(
+                name=insn.InsnName.LD, operands=[insn.IndirectHLDecr(), insn.R8.A]
+            )
         # LD [HL], n
         case 0x36:
             size = 2
             imm = rom[index + 1]
             decoded = insn.Insn(
                 name=insn.InsnName.LD, operands=[insn.R8.HL, insn.U8(imm)]
+            )
+        # LD A, [HL-]
+        case 0x3A:
+            decoded = insn.Insn(
+                name=insn.InsnName.LD, operands=[insn.R8.A, insn.IndirectHLDecr()]
             )
         # LD A, n
         case 0x3E:
@@ -390,7 +410,6 @@ def decode_insn(rom: bytes, index: int) -> Optional[DecodedInsn]:
     return DecodedInsn(insn=decoded, size=size) if decoded is not None else None
 
 
-#
 def load_u16(rom: bytes, index: int) -> insn.U16:
     """Reads an unsigned 16-bit value in little endian order"""
     return insn.U16(rom[index] + (rom[index + 1] << 8))

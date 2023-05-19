@@ -105,15 +105,21 @@ ld [DE], A
 ld A, [$f0a1]
 ld [$f0a1], A
 
+nop
+
 ; Load accumulator/indirect 8 bit
 ldh A, [C]
 ldh [C], A
+
+nop
 
 ; load indirect, increment/decrement
 ld A, [HL-]
 ld [HL-], A
 ld A, [HL+]
 ld [HL+], A
+
+nop
 
 ; 16-bit transfers
 ld BC, $1234

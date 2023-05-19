@@ -1,6 +1,7 @@
-from typing import Iterable
+from typing import Iterable, List, Union
 
 import pytest
+import subprocess
 
 from charybdis import disasm, insn
 
@@ -122,3 +123,53 @@ def test_decode_insn__u3_r8(
     name: insn.InsnName, bit: int, r: insn.R8, data: Iterable[int]
 ) -> None:
     _assert_decode(data, insn.Insn(name=name, operands=[insn.U3(bit), r]))
+
+
+def test_disassembly_correspondence() -> None:
+    def disassemble(code: bytes) -> str:
+        offset = 0
+        text = ""
+        while offset < len(code):
+            result = disasm.decode_insn(code, offset)
+            assert result is not None
+            text += result.insn.render()
+            text += "\n"
+            offset += result.size
+        header = 'SECTION "ROM Bank $000", ROM0[$150]\n'
+        return header + text
+
+    def assemble(asm: str) -> bytes:
+        process = subprocess.Popen(
+            [
+                "docker",
+                "run",
+                "--rm",
+                "-i",
+                "rgbds",
+                "rgbasm",
+                "-o",
+                "/dev/stdout",
+                "-",
+            ],
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+        )
+
+        process.stdin.write(asm.encode("utf-8"))
+        process.stdin.close()
+
+        # These indexes are fixed to the length of the section header name.
+        obj: bytes = process.stdout.read()
+        section_size = (
+            obj[0x22] + (obj[0x23] << 8) + (obj[0x24] << 16) + (obj[0x25] << 24)
+        )
+
+        return obj[0x34 : (0x34 + section_size)]
+
+    with open("tests/test.asm", "r") as f:
+        asm = f.read()
+        code = assemble(asm)
+        asm_2 = disassemble(code)
+        code_2 = assemble(asm_2)
+
+        assert code == code_2
