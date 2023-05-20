@@ -175,23 +175,22 @@ class Insn:
 
 
 def render_operand(operand: InsnOperand) -> str:
-    if isinstance(operand, R8):
-        return operand.value.lower()
-    elif isinstance(operand, R16):
-        return operand.value.lower()
-    elif isinstance(operand, U3) or isinstance(operand, U8) or isinstance(operand, U16):
-        return f"${operand.value:x}"
-    elif isinstance(operand, DirectU8):
-        return f"[{render_operand(operand.offset)}]"
-    elif isinstance(operand, DirectU16):
-        return f"[{render_operand(operand.offset)}]"
-    elif isinstance(operand, IndirectR8):
-        return f"[{render_operand(operand.reg)}]"
-    elif isinstance(operand, IndirectR16):
-        return f"[{render_operand(operand.reg)}]"
-    elif isinstance(operand, IndirectHLIncr):
-        print(render_operand(R8.HL))
-        return f"[hl+]"
-    elif isinstance(operand, IndirectHLDecr):
-        return f"[hl-]"
-    return operand.value
+    str = ""
+    match operand:
+        case Label(value):
+            str = value
+        case R8() | R16():
+            str = operand.value.lower()
+        case U3(value) | U8(value) | U16(value):
+            str = f"${value:x}"
+        case DirectU16(offset):
+            str = f"[{offset}]"
+        case IndirectR8(reg) | IndirectR16(reg):
+            str = f"[{reg}]"
+        case IndirectHLIncr():
+            str = "[hl+]"
+        case IndirectHLDecr():
+            str = "[hl-]"
+        case _:
+            raise Exception(f"unknown operand type: {type(operand)}")
+    return str
