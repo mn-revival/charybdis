@@ -109,11 +109,12 @@ def get_bank_header(bank: int) -> str:
         start = ROMX_BANK_START
         type = "ROMX"
         options = f", BANK[${bank:x}]"
-    return f'SECTION "ROM Bank ${bank:03x}", {type}[${start:x}]{options}\n\n'
+    return f'SECTION "ROM Bank ${bank:03x}", {type}[${start:x}]{options}'
 
 
 def write_bank(state: DisassemblerState, f: TextIO, bank: int) -> None:
     f.write(get_bank_header(bank))
+    f.write("\n\n")
     offset = 0
     while offset < ROM_BANK_SIZE:
         index = ROM_BANK_SIZE * bank + offset
