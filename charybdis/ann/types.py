@@ -11,12 +11,18 @@ class BankAddr:
     addr: int
 
 
-AnnType = Union["ArrayType", "PointerType", "PrimitiveType"]
+AnnType = Union["ArrayType", "CodeType", "ImageType", "PointerType", "PrimitiveType"]
 
 
-class PrimitiveType(enum.Enum):
-    U8 = "U8"
-    U16 = "U16"
+@dataclasses.dataclass
+class CodeType:
+    size: int
+
+
+@dataclasses.dataclass
+class ImageType:
+    size: int
+    width: Optional[int] = 0
 
 
 @dataclasses.dataclass
@@ -28,6 +34,11 @@ class ArrayType:
 @dataclasses.dataclass
 class PointerType:
     type: AnnType
+
+
+class PrimitiveType(enum.Enum):
+    U8 = "U8"
+    U16 = "U16"
 
 
 @dataclasses.dataclass
@@ -42,7 +53,6 @@ class Ann:
 def ann(bank: int, addr: int, label: str, type: Optional[AnnType] = None) -> Ann:
     assert bank >= 0 and bank <= 0x1FF
     assert addr >= addr <= 0xFFFF
-    assert len(label) > 0
     return Ann(
         addr=BankAddr(bank=bank, addr=addr),
         label=label,

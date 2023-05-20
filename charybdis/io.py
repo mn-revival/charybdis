@@ -10,7 +10,7 @@ from typing import Any, TextIO, TypedDict
 import chevron
 
 from charybdis import disasm
-from charybdis.ann import parser, types as ann_types
+from charybdis.ann import ann_parser, types as ann_types
 
 OFFSET_CGB_FLAG = 0x0143
 OFFSET_ROM_SIZE = 0x0148
@@ -66,17 +66,20 @@ def initialize_state(options: DisassemblerOptions) -> DisassemblerState:
             rom_data.extend(chunk)
             rom_md5.update(chunk)
             done = len(chunk) < FILE_CHUNK_SIZE
+    # TODO: Inspect Nintendo header for basic integrity check
+    rom_banks = 2 << rom_data[OFFSET_ROM_SIZE]
+    assert len(rom_data) == rom_banks * ROM_BANK_SIZE
     anns = []
     ann_file_path = options.rom_file_path.with_suffix(".ann")
     if ann_file_path.exists() and ann_file_path.is_file():
         logging.info("annotation file exists, parsing")
         with open(ann_file_path, "r") as f:
-            anns = parser.parse_ann_file(f)
+            anns = ann_parser.parse_ann_file(f)
     return DisassemblerState(
         **dataclasses.asdict(options),
         anns=anns,
         is_gbc=(rom_data[OFFSET_CGB_FLAG] & 0x80) > 0,
-        rom_banks=2 << rom_data[OFFSET_ROM_SIZE],
+        rom_banks=rom_banks,
         rom_data=bytes(rom_data),
         rom_md5=rom_md5.hexdigest(),
     )
