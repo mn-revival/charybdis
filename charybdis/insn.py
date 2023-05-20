@@ -175,22 +175,24 @@ class Insn:
 
 
 def render_operand(operand: InsnOperand) -> str:
-    str = ""
+    s = ""
     match operand:
         case Label(value):
-            str = value
+            s = value
         case R8() | R16():
-            str = operand.value.lower()
-        case U3(value) | U8(value) | U16(value):
-            str = f"${value:x}"
+            s = operand.value.lower()
+        case U3(value):
+            s = str(value)
+        case U8(value) | U16(value):
+            s = f"${value:x}"
         case DirectU16(offset):
-            str = f"[{offset}]"
+            s = f"[${offset:x}]"
         case IndirectR8(reg) | IndirectR16(reg):
-            str = f"[{reg}]"
+            s = f"[{render_operand(reg)}]"
         case IndirectHLIncr():
-            str = "[hl+]"
+            s = "[hl+]"
         case IndirectHLDecr():
-            str = "[hl-]"
+            s = "[hl-]"
         case _:
             raise Exception(f"unknown operand type: {type(operand)}")
-    return str
+    return s
