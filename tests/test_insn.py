@@ -24,6 +24,7 @@ def test_insn__render__no_operands() -> None:
         ("$ff", insn.U8(0xFF)),
         ("$abcd", insn.U16(0xABCD)),
         ("[$abcd]", insn.DirectU16(0xABCD)),
+        ("[c]", insn.IndirectHramC()),
         ("[bc]", insn.IndirectR16(insn.R16.BC)),
         ("[hl+]", insn.IndirectHLIncr()),
         ("[hl-]", insn.IndirectHLDecr()),

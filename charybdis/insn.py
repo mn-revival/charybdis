@@ -105,24 +105,14 @@ class R16(enum.Enum):
 
 
 @dataclasses.dataclass
-class DirectU8:
-    """Direct addressing mode via 8-bit integer"""
-
-    offset: U8
-
-
-@dataclasses.dataclass
 class DirectU16:
     """Direct addressing mode via 16-bit integer"""
 
     offset: U16
 
 
-@dataclasses.dataclass
-class IndirectR8:
-    """Indirect addressing mode via 8-bit register"""
-
-    reg: R8
+class IndirectHramC:
+    """Indirect addressing of HRAM through register C"""
 
 
 @dataclasses.dataclass
@@ -149,9 +139,8 @@ InsnOperand = Union[
     U3,
     U8,
     U16,
-    DirectU8,
     DirectU16,
-    IndirectR8,
+    IndirectHramC,
     IndirectR16,
     IndirectHLIncr,
     IndirectHLDecr,
@@ -187,7 +176,9 @@ def render_operand(operand: InsnOperand) -> str:
             s = f"${value:x}"
         case DirectU16(offset):
             s = f"[${offset:x}]"
-        case IndirectR8(reg) | IndirectR16(reg):
+        case IndirectHramC():
+            s = "[c]"
+        case IndirectR16(reg):
             s = f"[{render_operand(reg)}]"
         case IndirectHLIncr():
             s = "[hl+]"

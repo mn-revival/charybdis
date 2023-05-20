@@ -293,12 +293,12 @@ def decode_insn(rom: bytes, index: int) -> Optional[DecodedInsn]:
             offset = rom[index + 1]
             decoded = insn.Insn(
                 name=insn.InsnName.LDH,
-                operands=[insn.DirectU8(insn.U8(offset)), insn.R8.A],
+                operands=[insn.DirectU16(insn.U16(0xFF00 + offset)), insn.R8.A],
             )
         # LDH (C), A
         case 0xE2:
             decoded = insn.Insn(
-                name=insn.InsnName.LDH, operands=[insn.IndirectR8(insn.R8.C), insn.R8.A]
+                name=insn.InsnName.LDH, operands=[insn.IndirectHramC(), insn.R8.A]
             )
         # LD [nn], A
         case 0xEA:
@@ -314,12 +314,12 @@ def decode_insn(rom: bytes, index: int) -> Optional[DecodedInsn]:
             offset = rom[index + 1]
             decoded = insn.Insn(
                 name=insn.InsnName.LDH,
-                operands=[insn.R8.A, insn.DirectU8(insn.U8(offset))],
+                operands=[insn.R8.A, insn.DirectU16(insn.U16(0xFF00 + offset))],
             )
         # LDH A, (C)
         case 0xF2:
             decoded = insn.Insn(
-                name=insn.InsnName.LDH, operands=[insn.R8.A, insn.IndirectR8(insn.R8.C)]
+                name=insn.InsnName.LDH, operands=[insn.R8.A, insn.IndirectHramC()]
             )
         # LD A, [nn]
         case 0xFA:
