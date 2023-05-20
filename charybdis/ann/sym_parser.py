@@ -13,6 +13,7 @@ symbol_length = pp.Word(pp.hexnums, exact=4).set_parse_action(
 
 
 def parse_basic_symbol(s: str, l: int, t: pp.ParseResults) -> Any:
+    ty: types.AnnType
     match t[0].type:
         case "code":
             ty = types.CodeType(size=t[0].size)
