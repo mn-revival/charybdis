@@ -175,7 +175,7 @@ def render_operand(operand: InsnOperand) -> str:
         case U8(value) | U16(value):
             s = f"${value:x}"
         case DirectU16(offset):
-            s = f"[${offset:x}]"
+            s = f"[${offset.value:x}]"
         case IndirectHramC():
             s = "[c]"
         case IndirectR16(reg):
