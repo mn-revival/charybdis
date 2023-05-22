@@ -66,10 +66,6 @@ def parse_sym_line(raw_line: str) -> Optional[types.Ann]:
     return result[0] if len(result) == 1 else None
 
 
-def parse_sym_file(f: IO[str]) -> list[types.Ann]:
-    anns = []
-    for line in f:
-        ann_opt = parse_sym_line(line.strip())
-        if ann_opt is not None:
-            anns.append(ann_opt)
-    return anns
+def parse_sym_file(f: IO[str]) -> types.AnnMapping:
+    anns = [parse_sym_line(line.strip()) for line in f]
+    return types.AnnMapping([ann for ann in anns if ann is not None])

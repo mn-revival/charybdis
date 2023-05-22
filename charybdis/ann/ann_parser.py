@@ -77,5 +77,6 @@ def parse_ann(line: str) -> types.Ann:
     return ann.parse_string(line, parse_all=True)[0]  # type: ignore
 
 
-def parse_ann_file(f: IO[str]) -> list[types.Ann]:
-    return [parse_ann(line.strip()) for line in f]
+def parse_ann_file(f: IO[str]) -> types.AnnMapping:
+    anns = [parse_ann(line.strip()) for line in f]
+    return types.AnnMapping(anns)

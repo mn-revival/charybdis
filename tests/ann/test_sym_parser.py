@@ -58,19 +58,21 @@ SYM_FILE = """
 
 
 def test_parse_sym_file() -> None:
-    anns = [
+    with tempfile.TemporaryFile(mode="w+") as f:
+        f.write(SYM_FILE)
+        f.seek(0, os.SEEK_SET)
+        anns = sym_parser.parse_sym_file(f)
+    assert anns.has(
         types.Ann(
             addr=types.BankAddr(bank=0x00, addr=0x0000),
             label="",
             type=types.CodeType(size=0x03),
-        ),
+        )
+    )
+    assert anns.has(
         types.Ann(
             addr=types.BankAddr(bank=0x00, addr=0x0307),
             label="",
             type=types.ArrayType(type=types.PrimitiveType.U8, size=0x12),
-        ),
-    ]
-    with tempfile.TemporaryFile(mode="w+") as f:
-        f.write(SYM_FILE)
-        f.seek(0, os.SEEK_SET)
-        assert anns == sym_parser.parse_sym_file(f)
+        )
+    )

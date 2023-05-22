@@ -35,13 +35,13 @@ ff:beef Beef, [5]u16
 
 
 def test_parse_ann_file() -> None:
-    anns = [
-        types.ann(0x01, 0x1234, "Test", types.PrimitiveType.U8),
-        types.ann(
-            0xFF, 0xBEEF, "Beef", types.ArrayType(type=types.PrimitiveType.U16, size=5)
-        ),
-    ]
     with tempfile.TemporaryFile(mode="w+") as f:
         f.write(ANN_FILE)
         f.seek(0, os.SEEK_SET)
-        assert anns == ann_parser.parse_ann_file(f)
+        anns = ann_parser.parse_ann_file(f)
+    assert anns.has(types.ann(0x01, 0x1234, "Test", types.PrimitiveType.U8))
+    assert anns.has(
+        types.ann(
+            0xFF, 0xBEEF, "Beef", types.ArrayType(type=types.PrimitiveType.U16, size=5)
+        )
+    )
