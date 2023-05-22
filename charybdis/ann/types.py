@@ -1,7 +1,11 @@
 import collections
 import dataclasses
 import enum
-from typing import Optional, Union
+from typing import Optional, Self, Union
+
+ROM_BANK_SIZE = 0x4000
+ROM0_BANK_START = 0x0000
+ROMX_BANK_START = 0x4000
 
 
 @dataclasses.dataclass(frozen=True)
@@ -10,6 +14,25 @@ class BankAddr:
 
     bank: int
     addr: int
+
+    @staticmethod
+    def bank_start(bank: int) -> "BankAddr":
+        start = ROM0_BANK_START if bank == 0 else ROMX_BANK_START
+        return BankAddr(bank=bank, addr=start)
+
+    def next(self) -> Optional["BankAddr"]:
+        if self.addr == 0xFFFF:
+            return None
+        return BankAddr(bank=self.bank, addr=self.addr + 1)
+
+    @property
+    def rom_index(self) -> int:
+        start = ROM0_BANK_START if self.bank == 0 else ROMX_BANK_START
+        return self.bank * ROM_BANK_SIZE + (self.addr - start)
+
+    @property
+    def offset(self) -> int:
+        return self.addr - (ROM0_BANK_START if self.bank == 0 else ROMX_BANK_START)
 
 
 AnnType = Union["ArrayType", "CodeType", "ImageType", "PointerType", "PrimitiveType"]

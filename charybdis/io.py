@@ -9,7 +9,7 @@ from typing import Any, TextIO, TypedDict
 
 import chevron
 
-from charybdis import disasm
+from charybdis import disasm, insn
 from charybdis.ann import ann_parser, types as ann_types
 
 OFFSET_CGB_FLAG = 0x0143
@@ -115,21 +115,24 @@ def get_bank_header(bank: int) -> str:
 def write_bank(state: DisassemblerState, f: TextIO, bank: int) -> None:
     f.write(get_bank_header(bank))
     f.write("\n\n")
-    offset = 0
-    while offset < ROM_BANK_SIZE:
-        index = ROM_BANK_SIZE * bank + offset
-        result = disasm.decode_insn(state.rom_data, index)
-        if result is not None:
-            size = result.size
-            line = result.insn.render()
-        else:
-            size = 1
-            line = f"DB ${state.rom_data[index]:02x}"
-        f.write(line)
-        f.write("\n")
+    addr = ann_types.BankAddr.bank_start(bank)
+    while addr is not None:
+        result = disasm.decode_insn(state.rom_data, addr.rom_index)
+        if result is None:
+            f.write(f"DB ${state.rom_data[addr.rom_index]:02x}\n")
+            addr = addr.next()
+            continue
+        size = result.size
         # NB: Shouldn't write something that spans multiple banks
-        assert (offset % ROM_BANK_SIZE) < ((offset + size) % ROM_BANK_SIZE) or size == 1
-        offset += size
+        assert (addr.offset % ROM_BANK_SIZE) < (
+            (addr.offset + size) % ROM_BANK_SIZE
+        ) or size == 1
+        f.write(result.insn.render())
+        f.write("\n")
+        for i in range(size):
+            if addr is None:
+                break
+            addr = addr.next()
 
 
 def write_makefile(state: DisassemblerState) -> None:
