@@ -4,6 +4,7 @@ import pathlib
 import tempfile
 
 from charybdis import io
+from charybdis.ann import types as ann_types
 
 
 def test_create_output_directory() -> None:
@@ -58,7 +59,7 @@ def _create_state(
     dir: str, overwrite: bool = False, rom_md5: str = ""
 ) -> io.DisassemblerState:
     return io.DisassemblerState(
-        anns=[],
+        anns=ann_types.AnnMapping(),
         is_gbc=False,
         output_directory_path=pathlib.Path(dir),
         overwrite=overwrite,

@@ -55,7 +55,7 @@ class AnnMapping:
     anns_at_address: dict[BankAddr, set[Ann]]
     label_addresses: dict[str, BankAddr]
 
-    def __init__(self, anns: list[Ann]) -> None:
+    def __init__(self, anns: list[Ann] = []) -> None:
         self.anns_at_address = collections.defaultdict(set)
         self.label_addresses = {}
         for ann in anns:

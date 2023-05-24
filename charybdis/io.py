@@ -42,7 +42,7 @@ class MakefileData(TypedDict):
 
 @dataclasses.dataclass
 class DisassemblerState(DisassemblerOptions):
-    anns: list[ann_types.Ann]
+    anns: ann_types.AnnMapping
     rom_banks: int
     rom_data: bytes
     rom_md5: str
@@ -69,7 +69,7 @@ def initialize_state(options: DisassemblerOptions) -> DisassemblerState:
     # TODO: Inspect Nintendo header for basic integrity check
     rom_banks = 2 << rom_data[OFFSET_ROM_SIZE]
     assert len(rom_data) == rom_banks * ROM_BANK_SIZE
-    anns = []
+    anns = ann_types.AnnMapping()
     ann_file_path = options.rom_file_path.with_suffix(".ann")
     if ann_file_path.exists() and ann_file_path.is_file():
         logging.info("annotation file exists, parsing")
