@@ -16,12 +16,14 @@ class BankAddr:
     addr: int
 
     @staticmethod
-    def bank_start(bank: int) -> "BankAddr":
+    def start(bank: int) -> "BankAddr":
         start = ROM0_BANK_START if bank == 0 else ROMX_BANK_START
         return BankAddr(bank=bank, addr=start)
 
     def next(self) -> Optional["BankAddr"]:
-        if self.addr == 0xFFFF:
+        if self.bank == 0 and self.addr == 0x3FFF:
+            return None
+        elif self.addr == 0xFFFF:
             return None
         return BankAddr(bank=self.bank, addr=self.addr + 1)
 

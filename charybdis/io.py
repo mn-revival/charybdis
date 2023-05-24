@@ -115,7 +115,7 @@ def get_bank_header(bank: int) -> str:
 def write_bank(state: DisassemblerState, f: TextIO, bank: int) -> None:
     f.write(get_bank_header(bank))
     f.write("\n\n")
-    addr: Optional[ann_types.BankAddr] = ann_types.BankAddr.bank_start(bank)
+    addr: Optional[ann_types.BankAddr] = ann_types.BankAddr.start(bank)
     while addr is not None:
         for ann in state.anns.anns_at_address.get(addr, set()):
             if len(ann.label) == 0:
