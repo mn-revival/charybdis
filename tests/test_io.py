@@ -41,7 +41,7 @@ def test_get_bank_header() -> None:
     )
 
 
-NOP_ASM = "nop\n" * io.ROM_BANK_SIZE
+NOP_ASM = "  nop\n" * io.ROM_BANK_SIZE
 BANK_ASM = f"""SECTION "ROM Bank $000", ROM0[$0]
 
 {NOP_ASM}"""
@@ -50,9 +50,9 @@ BANK_ASM = f"""SECTION "ROM Bank $000", ROM0[$0]
 def test_write_bank() -> None:
     state = _create_state(".")
     state.rom_data = bytes([0x00 for _ in range(io.ROM_BANK_SIZE)])
-    buffer = python_io.StringIO()
-    io.write_bank(state, buffer, 0)
-    assert BANK_ASM == buffer.getvalue()
+    with python_io.StringIO() as buffer:
+        io.write_bank(state, buffer, 0)
+        assert BANK_ASM == buffer.getvalue()
 
 
 def _create_state(
