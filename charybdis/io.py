@@ -5,7 +5,7 @@ import os.path
 import pathlib
 import shutil
 import typing
-from typing import Any, TextIO, TypedDict
+from typing import Any, Optional, TextIO, TypedDict
 
 import chevron
 
@@ -115,11 +115,15 @@ def get_bank_header(bank: int) -> str:
 def write_bank(state: DisassemblerState, f: TextIO, bank: int) -> None:
     f.write(get_bank_header(bank))
     f.write("\n\n")
-    addr = ann_types.BankAddr.bank_start(bank)
+    addr: Optional[ann_types.BankAddr] = ann_types.BankAddr.bank_start(bank)
     while addr is not None:
+        for ann in state.anns.anns_at_address.get(addr, set()):
+            if len(ann.label) == 0:
+                continue
+            f.write(f"{ann.label}:")
         result = disasm.decode_insn(state.rom_data, addr.rom_index)
         if result is None:
-            f.write(f"DB ${state.rom_data[addr.rom_index]:02x}\n")
+            f.write(f"  DB ${state.rom_data[addr.rom_index]:02x}\n")
             addr = addr.next()
             continue
         size = result.size
@@ -127,8 +131,7 @@ def write_bank(state: DisassemblerState, f: TextIO, bank: int) -> None:
         assert (addr.offset % ROM_BANK_SIZE) < (
             (addr.offset + size) % ROM_BANK_SIZE
         ) or size == 1
-        f.write(result.insn.render())
-        f.write("\n")
+        f.write(f"  {result.insn.render()}\n")
         for i in range(size):
             if addr is None:
                 break
