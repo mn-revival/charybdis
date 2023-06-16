@@ -105,24 +105,14 @@ class R16(enum.Enum):
 
 
 @dataclasses.dataclass
-class DirectU8:
-    """Direct addressing mode via 8-bit integer"""
-
-    offset: U8
-
-
-@dataclasses.dataclass
 class DirectU16:
     """Direct addressing mode via 16-bit integer"""
 
     offset: U16
 
 
-@dataclasses.dataclass
-class IndirectR8:
-    """Indirect addressing mode via 8-bit register"""
-
-    reg: R8
+class IndirectHramC:
+    """Indirect addressing of HRAM through register C"""
 
 
 @dataclasses.dataclass
@@ -149,9 +139,8 @@ InsnOperand = Union[
     U3,
     U8,
     U16,
-    DirectU8,
     DirectU16,
-    IndirectR8,
+    IndirectHramC,
     IndirectR16,
     IndirectHLIncr,
     IndirectHLDecr,
@@ -175,22 +164,26 @@ class Insn:
 
 
 def render_operand(operand: InsnOperand) -> str:
-    if isinstance(operand, R8):
-        return operand.value.lower()
-    elif isinstance(operand, R16):
-        return operand.value.lower()
-    elif isinstance(operand, U3) or isinstance(operand, U8) or isinstance(operand, U16):
-        return f"${operand.value:x}"
-    elif isinstance(operand, DirectU8):
-        return f"[{render_operand(operand.offset)}]"
-    elif isinstance(operand, DirectU16):
-        return f"[{render_operand(operand.offset)}]"
-    elif isinstance(operand, IndirectR8):
-        return f"[{render_operand(operand.reg)}]"
-    elif isinstance(operand, IndirectR16):
-        return f"[{render_operand(operand.reg)}]"
-    elif isinstance(operand, IndirectHLIncr):
-        return f"[hl+]"
-    elif isinstance(operand, IndirectHLDecr):
-        return f"[hl-]"
-    return operand.value
+    s = ""
+    match operand:
+        case Label(value):
+            s = value
+        case R8() | R16():
+            s = operand.value.lower()
+        case U3(value):
+            s = str(value)
+        case U8(value) | U16(value):
+            s = f"${value:x}"
+        case DirectU16(offset):
+            s = f"[${offset.value:x}]"
+        case IndirectHramC():
+            s = "[c]"
+        case IndirectR16(reg):
+            s = f"[{render_operand(reg)}]"
+        case IndirectHLIncr():
+            s = "[hl+]"
+        case IndirectHLDecr():
+            s = "[hl-]"
+        case _:
+            raise Exception(f"unknown operand type: {type(operand)}")
+    return s

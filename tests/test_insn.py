@@ -1,5 +1,7 @@
 from charybdis import insn
 
+import pytest
+
 
 def test_insn__render() -> None:
     ld = insn.Insn(name=insn.InsnName.LD, operands=[insn.R8.A, insn.R8.B])
@@ -11,19 +13,27 @@ def test_insn__render__no_operands() -> None:
     assert "ret" == ret.render()
 
 
-def test_render_operand__r8() -> None:
-    assert "a" == insn.render_operand(insn.R8.A)
-    assert "[hl]" == insn.render_operand(insn.R8.HL)
+@pytest.mark.parametrize(
+    "operand_str,operand",
+    [
+        ("main", insn.Label("main")),
+        ("a", insn.R8.A),
+        ("[hl]", insn.R8.HL),
+        ("hl", insn.R16.HL),
+        ("5", insn.U3(0x5)),
+        ("$ff", insn.U8(0xFF)),
+        ("$abcd", insn.U16(0xABCD)),
+        ("[$abcd]", insn.DirectU16(insn.U16(0xABCD))),
+        ("[c]", insn.IndirectHramC()),
+        ("[bc]", insn.IndirectR16(insn.R16.BC)),
+        ("[hl+]", insn.IndirectHLIncr()),
+        ("[hl-]", insn.IndirectHLDecr()),
+    ],
+)
+def test_render_operand(operand_str: str, operand: insn.InsnOperand) -> None:
+    assert operand_str == insn.render_operand(operand)
 
 
-def test_render_operand__r16() -> None:
-    assert "hl" == insn.render_operand(insn.R16.HL)
-
-
-def test_render_operand__imm() -> None:
-    assert "$ff" == insn.render_operand(insn.U8(0xFF))
-    assert "$ffff" == insn.render_operand(insn.U16(0xFFFF))
-
-
-def test_render_operand__label() -> None:
-    assert "main" == insn.render_operand(insn.Label("main"))
+def test_render_operand__unsupported() -> None:
+    with pytest.raises(Exception):
+        insn.render_operand("Unsupported raw string")  # type: ignore
