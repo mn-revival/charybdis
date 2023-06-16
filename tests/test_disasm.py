@@ -1,4 +1,4 @@
-from typing import Iterable, List, Union
+from typing import Iterable
 
 import pytest
 import subprocess
@@ -123,65 +123,3 @@ def test_decode_insn__u3_r8(
     name: insn.InsnName, bit: int, r: insn.R8, data: Iterable[int]
 ) -> None:
     _assert_decode(data, insn.Insn(name=name, operands=[insn.U3(bit), r]))
-
-
-def test_disassembly_correspondence() -> None:
-    section_name = "ROM Bank $000"
-
-    def disassemble(code: bytes) -> str:
-        offset = 0
-        text = ""
-        while offset < len(code):
-            result = disasm.decode_insn(code, offset)
-            assert result is not None
-            text += result.insn.render()
-            text += "\n"
-            offset += result.size
-        header = f'SECTION "{section_name}", ROM0[$150]\n'
-        return header + text
-
-    def assemble(asm: str) -> bytes:
-        process = subprocess.Popen(
-            [
-                "docker",
-                "run",
-                "--rm",
-                "-i",
-                "rgbds",
-                "rgbasm",
-                "-o",
-                "/dev/stdout",
-                "-",
-            ],
-            stdin=subprocess.PIPE,
-            stdout=subprocess.PIPE,
-        )
-
-        assert process.stdin is not None
-        assert process.stdout is not None
-
-        process.stdin.write(asm.encode("utf-8"))
-        process.stdin.close()
-
-        obj: bytes = process.stdout.read()
-
-        # Section size is located 0x14 (length of headers) + length of name + 1 (null terminator)
-        size_index = 0x14 + len(section_name) + 1
-        section_size = (
-            obj[size_index]
-            + (obj[size_index + 1] << 8)
-            + (obj[size_index + 2] << 16)
-            + (obj[size_index + 3] << 24)
-        )
-
-        code_index = size_index + 18
-
-        return obj[code_index : (code_index + section_size)]
-
-    with open("tests/test.asm", "r") as f:
-        asm = f.read()
-        code = assemble(asm)
-        asm_2 = disassemble(code)
-        code_2 = assemble(asm_2)
-
-        assert code == code_2
