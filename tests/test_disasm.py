@@ -1,6 +1,7 @@
 from typing import Iterable
 
 import pytest
+import subprocess
 
 from charybdis import disasm, insn
 

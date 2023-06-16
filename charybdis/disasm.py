@@ -18,6 +18,11 @@ def decode_insn(rom: bytes, index: int) -> Optional[DecodedInsn]:
         # NOP
         case 0x00:
             decoded = insn.Insn(name=insn.InsnName.NOP)
+        # LD BC, nn
+        case 0x01:
+            size = 3
+            imm16 = load_u16(rom, index + 1)
+            decoded = insn.Insn(name=insn.InsnName.LD, operands=[insn.R16.BC, imm16])
         # LD [BC], A
         case 0x02:
             decoded = insn.Insn(
@@ -34,7 +39,15 @@ def decode_insn(rom: bytes, index: int) -> Optional[DecodedInsn]:
         # RLCA
         case 0x07:
             decoded = insn.Insn(name=insn.InsnName.RLCA)
-        # LD A, (BC)
+        # LD [nn], SP
+        case 0x08:
+            size = 3
+            addr = load_u16(rom, index + 1)
+            decoded = insn.Insn(
+                name=insn.InsnName.LD,
+                operands=[insn.DirectU16(addr), insn.R16.SP],
+            )
+        # LD A, [BC]
         case 0x0A:
             decoded = insn.Insn(
                 name=insn.InsnName.LD,
@@ -50,6 +63,11 @@ def decode_insn(rom: bytes, index: int) -> Optional[DecodedInsn]:
         # RRCA
         case 0x0F:
             decoded = insn.Insn(name=insn.InsnName.RRCA)
+        # LD DE, nn
+        case 0x11:
+            size = 3
+            imm16 = load_u16(rom, index + 1)
+            decoded = insn.Insn(name=insn.InsnName.LD, operands=[insn.R16.DE, imm16])
         # LD (DE), A
         case 0x12:
             decoded = insn.Insn(
@@ -82,6 +100,16 @@ def decode_insn(rom: bytes, index: int) -> Optional[DecodedInsn]:
         # RRA
         case 0x1F:
             decoded = insn.Insn(name=insn.InsnName.RRA)
+        # LD HL, nn
+        case 0x21:
+            size = 3
+            imm16 = load_u16(rom, index + 1)
+            decoded = insn.Insn(name=insn.InsnName.LD, operands=[insn.R16.HL, imm16])
+        # LD [HL+], A
+        case 0x22:
+            decoded = insn.Insn(
+                name=insn.InsnName.LD, operands=[insn.IndirectHLIncr(), insn.R8.A]
+            )
         # LD H, n
         case 0x26:
             size = 2
@@ -92,6 +120,11 @@ def decode_insn(rom: bytes, index: int) -> Optional[DecodedInsn]:
         # DAA
         case 0x27:
             decoded = insn.Insn(name=insn.InsnName.DAA)
+        # LD A, [HL+]
+        case 0x2A:
+            decoded = insn.Insn(
+                name=insn.InsnName.LD, operands=[insn.R8.A, insn.IndirectHLIncr()]
+            )
         # LD L, n
         case 0x2E:
             size = 2
@@ -102,6 +135,16 @@ def decode_insn(rom: bytes, index: int) -> Optional[DecodedInsn]:
         # CPL
         case 0x2F:
             decoded = insn.Insn(name=insn.InsnName.CPL)
+        # LD SP, nn
+        case 0x31:
+            size = 3
+            imm16 = load_u16(rom, index + 1)
+            decoded = insn.Insn(name=insn.InsnName.LD, operands=[insn.R16.SP, imm16])
+        # LD [HL-], A
+        case 0x32:
+            decoded = insn.Insn(
+                name=insn.InsnName.LD, operands=[insn.IndirectHLDecr(), insn.R8.A]
+            )
         # LD [HL], n
         case 0x36:
             size = 2
@@ -112,6 +155,11 @@ def decode_insn(rom: bytes, index: int) -> Optional[DecodedInsn]:
         # SCF
         case 0x37:
             decoded = insn.Insn(name=insn.InsnName.SCF)
+        # LD A, [HL-]
+        case 0x3A:
+            decoded = insn.Insn(
+                name=insn.InsnName.LD, operands=[insn.R8.A, insn.IndirectHLDecr()]
+            )
         # CCF
         case 0x3F:
             decoded = insn.Insn(name=insn.InsnName.CCF)
@@ -506,6 +554,18 @@ def decode_insn(rom: bytes, index: int) -> Optional[DecodedInsn]:
         # CP A
         case 0xBF:
             decoded = insn.Insn(name=insn.InsnName.CP, operands=[insn.R8.A])
+        # POP BC
+        case 0xC1:
+            decoded = insn.Insn(name=insn.InsnName.POP, operands=[insn.R16.BC])
+        # PUSH BC
+        case 0xC5:
+            decoded = insn.Insn(name=insn.InsnName.PUSH, operands=[insn.R16.BC])
+        # POP DE
+        case 0xD1:
+            decoded = insn.Insn(name=insn.InsnName.POP, operands=[insn.R16.DE])
+        # PUSH BC
+        case 0xD5:
+            decoded = insn.Insn(name=insn.InsnName.PUSH, operands=[insn.R16.DE])
         # LDH [n], A
         case 0xE0:
             size = 2
@@ -514,18 +574,24 @@ def decode_insn(rom: bytes, index: int) -> Optional[DecodedInsn]:
                 name=insn.InsnName.LDH,
                 operands=[insn.DirectU16(insn.U16(0xFF00 + offset)), insn.R8.A],
             )
+        # POP HL
+        case 0xE1:
+            decoded = insn.Insn(name=insn.InsnName.POP, operands=[insn.R16.HL])
         # LDH (C), A
         case 0xE2:
             decoded = insn.Insn(
                 name=insn.InsnName.LDH, operands=[insn.IndirectHramC(), insn.R8.A]
             )
+        # PUSH HL
+        case 0xE5:
+            decoded = insn.Insn(name=insn.InsnName.PUSH, operands=[insn.R16.HL])
         # LD [nn], A
         case 0xEA:
             size = 3
-            addr = rom[index + 1] + (rom[index + 2] << 8)
+            addr = load_u16(rom, index + 1)
             decoded = insn.Insn(
                 name=insn.InsnName.LD,
-                operands=[insn.DirectU16(insn.U16(addr)), insn.R8.A],
+                operands=[insn.DirectU16(addr), insn.R8.A],
             )
         # LDH A, [n]
         case 0xF0:
@@ -535,7 +601,10 @@ def decode_insn(rom: bytes, index: int) -> Optional[DecodedInsn]:
                 name=insn.InsnName.LDH,
                 operands=[insn.R8.A, insn.DirectU16(insn.U16(0xFF00 + offset))],
             )
-        # LDH A, (C)
+        # POP AF
+        case 0xF1:
+            decoded = insn.Insn(name=insn.InsnName.POP, operands=[insn.R16.AF])
+        # LDH A, [C]
         case 0xF2:
             decoded = insn.Insn(
                 name=insn.InsnName.LDH, operands=[insn.R8.A, insn.IndirectHramC()]
@@ -543,16 +612,29 @@ def decode_insn(rom: bytes, index: int) -> Optional[DecodedInsn]:
         # DI
         case 0xF3:
             decoded = insn.Insn(name=insn.InsnName.DI)
+        # PUSH AF
+        case 0xF5:
+            decoded = insn.Insn(name=insn.InsnName.PUSH, operands=[insn.R16.AF])
+        # LD SP, HL
+        case 0xF9:
+            decoded = insn.Insn(
+                name=insn.InsnName.LD, operands=[insn.R16.SP, insn.R16.HL]
+            )
         # LD A, [nn]
         case 0xFA:
             size = 3
-            addr = rom[index + 1] + (rom[index + 2] << 8)
+            addr = load_u16(rom, index + 1)
             decoded = insn.Insn(
                 name=insn.InsnName.LD,
-                operands=[insn.R8.A, insn.DirectU16(insn.U16(addr))],
+                operands=[insn.R8.A, insn.DirectU16(addr)],
             )
         # EI
         case 0xFB:
             decoded = insn.Insn(name=insn.InsnName.EI)
 
     return DecodedInsn(insn=decoded, size=size) if decoded is not None else None
+
+
+def load_u16(rom: bytes, index: int) -> insn.U16:
+    """Reads an unsigned 16-bit value in little endian order"""
+    return insn.U16(rom[index] + (rom[index + 1] << 8))

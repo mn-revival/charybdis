@@ -105,12 +105,34 @@ ld [DE], A
 ld A, [$f0a1]
 ld [$f0a1], A
 
+nop
+
 ; Load accumulator/indirect 8 bit
 ldh A, [C]
 ldh [C], A
+
+nop
 
 ; load indirect, increment/decrement
 ld A, [HL-]
 ld [HL-], A
 ld A, [HL+]
 ld [HL+], A
+
+nop
+
+; 16-bit transfers
+ld BC, $1234
+ld DE, $5678
+ld HL, $abcd
+ld SP, $12ab
+ld [$1234], SP
+ld SP, HL
+push BC
+push DE
+push HL
+push AF
+pop BC
+pop DE
+pop HL
+pop AF
