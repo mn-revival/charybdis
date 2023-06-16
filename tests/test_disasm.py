@@ -110,9 +110,19 @@ def test_decode_insn__r8_r8(
     _assert_decode([byte], insn.Insn(name=name, operands=[r1, r2]))
 
 
-@pytest.mark.parametrize("name,r,data", R8_CASES)
+# TODO: Merge these two parameterized tests after 0xCB opcodes are implemented
+@pytest.mark.parametrize("name,r,data", ALU_R8_CASES)
+def test_decode_insn__alu_r8(
+    name: insn.InsnName, r: insn.R8, data: Iterable[int]
+) -> None:
+    _assert_decode(data, insn.Insn(name=name, operands=[r]))
+
+
+@pytest.mark.parametrize("name,r,data", CB_R8_CASES)
 @pytest.mark.skip(reason="not implemented")
-def test_decode_insn__r8(name: insn.InsnName, r: insn.R8, data: Iterable[int]) -> None:
+def test_decode_insn__cb_r8(
+    name: insn.InsnName, r: insn.R8, data: Iterable[int]
+) -> None:
     _assert_decode(data, insn.Insn(name=name, operands=[r]))
 
 

@@ -287,6 +287,198 @@ def decode_insn(rom: bytes, index: int) -> Optional[DecodedInsn]:
         # LD A, A
         case 0x7F:
             decoded = insn.Insn(name=insn.InsnName.LD, operands=[insn.R8.A, insn.R8.A])
+        # ADD B
+        case 0x80:
+            decoded = insn.Insn(name=insn.InsnName.ADD, operands=[insn.R8.B])
+        # ADD C
+        case 0x81:
+            decoded = insn.Insn(name=insn.InsnName.ADD, operands=[insn.R8.C])
+        # ADD D
+        case 0x82:
+            decoded = insn.Insn(name=insn.InsnName.ADD, operands=[insn.R8.D])
+        # ADD E
+        case 0x83:
+            decoded = insn.Insn(name=insn.InsnName.ADD, operands=[insn.R8.E])
+        # ADD H
+        case 0x84:
+            decoded = insn.Insn(name=insn.InsnName.ADD, operands=[insn.R8.H])
+        # ADD L
+        case 0x85:
+            decoded = insn.Insn(name=insn.InsnName.ADD, operands=[insn.R8.L])
+        # ADD (HL)
+        case 0x86:
+            decoded = insn.Insn(name=insn.InsnName.ADD, operands=[insn.R8.HL])
+        # ADD A
+        case 0x87:
+            decoded = insn.Insn(name=insn.InsnName.ADD, operands=[insn.R8.A])
+        # ADC B
+        case 0x88:
+            decoded = insn.Insn(name=insn.InsnName.ADC, operands=[insn.R8.B])
+        # ADC C
+        case 0x89:
+            decoded = insn.Insn(name=insn.InsnName.ADC, operands=[insn.R8.C])
+        # ADC D
+        case 0x8A:
+            decoded = insn.Insn(name=insn.InsnName.ADC, operands=[insn.R8.D])
+        # ADC E
+        case 0x8B:
+            decoded = insn.Insn(name=insn.InsnName.ADC, operands=[insn.R8.E])
+        # ADC H
+        case 0x8C:
+            decoded = insn.Insn(name=insn.InsnName.ADC, operands=[insn.R8.H])
+        # ADC L
+        case 0x8D:
+            decoded = insn.Insn(name=insn.InsnName.ADC, operands=[insn.R8.L])
+        # ADC (HL)
+        case 0x8E:
+            decoded = insn.Insn(name=insn.InsnName.ADC, operands=[insn.R8.HL])
+        # ADC A
+        case 0x8F:
+            decoded = insn.Insn(name=insn.InsnName.ADC, operands=[insn.R8.A])
+        # SUB B
+        case 0x90:
+            decoded = insn.Insn(name=insn.InsnName.SUB, operands=[insn.R8.B])
+        # SUB C
+        case 0x91:
+            decoded = insn.Insn(name=insn.InsnName.SUB, operands=[insn.R8.C])
+        # SUB D
+        case 0x92:
+            decoded = insn.Insn(name=insn.InsnName.SUB, operands=[insn.R8.D])
+        # SUB E
+        case 0x93:
+            decoded = insn.Insn(name=insn.InsnName.SUB, operands=[insn.R8.E])
+        # SUB H
+        case 0x94:
+            decoded = insn.Insn(name=insn.InsnName.SUB, operands=[insn.R8.H])
+        # SUB L
+        case 0x95:
+            decoded = insn.Insn(name=insn.InsnName.SUB, operands=[insn.R8.L])
+        # SUB (HL)
+        case 0x96:
+            decoded = insn.Insn(name=insn.InsnName.SUB, operands=[insn.R8.HL])
+        # SUB A
+        case 0x97:
+            decoded = insn.Insn(name=insn.InsnName.SUB, operands=[insn.R8.A])
+        # SBC B
+        case 0x98:
+            decoded = insn.Insn(name=insn.InsnName.SBC, operands=[insn.R8.B])
+        # SBC C
+        case 0x99:
+            decoded = insn.Insn(name=insn.InsnName.SBC, operands=[insn.R8.C])
+        # SBC D
+        case 0x9A:
+            decoded = insn.Insn(name=insn.InsnName.SBC, operands=[insn.R8.D])
+        # SBC E
+        case 0x9B:
+            decoded = insn.Insn(name=insn.InsnName.SBC, operands=[insn.R8.E])
+        # SBC H
+        case 0x9C:
+            decoded = insn.Insn(name=insn.InsnName.SBC, operands=[insn.R8.H])
+        # SBC L
+        case 0x9D:
+            decoded = insn.Insn(name=insn.InsnName.SBC, operands=[insn.R8.L])
+        # SBC (HL)
+        case 0x9E:
+            decoded = insn.Insn(name=insn.InsnName.SBC, operands=[insn.R8.HL])
+        # SBC A
+        case 0x9F:
+            decoded = insn.Insn(name=insn.InsnName.SBC, operands=[insn.R8.A])
+        # AND B
+        case 0xA0:
+            decoded = insn.Insn(name=insn.InsnName.AND, operands=[insn.R8.B])
+        # AND C
+        case 0xA1:
+            decoded = insn.Insn(name=insn.InsnName.AND, operands=[insn.R8.C])
+        # AND D
+        case 0xA2:
+            decoded = insn.Insn(name=insn.InsnName.AND, operands=[insn.R8.D])
+        # AND E
+        case 0xA3:
+            decoded = insn.Insn(name=insn.InsnName.AND, operands=[insn.R8.E])
+        # AND H
+        case 0xA4:
+            decoded = insn.Insn(name=insn.InsnName.AND, operands=[insn.R8.H])
+        # AND L
+        case 0xA5:
+            decoded = insn.Insn(name=insn.InsnName.AND, operands=[insn.R8.L])
+        # AND (HL)
+        case 0xA6:
+            decoded = insn.Insn(name=insn.InsnName.AND, operands=[insn.R8.HL])
+        # AND A
+        case 0xA7:
+            decoded = insn.Insn(name=insn.InsnName.AND, operands=[insn.R8.A])
+        # XOR B
+        case 0xA8:
+            decoded = insn.Insn(name=insn.InsnName.XOR, operands=[insn.R8.B])
+        # XOR C
+        case 0xA9:
+            decoded = insn.Insn(name=insn.InsnName.XOR, operands=[insn.R8.C])
+        # XOR D
+        case 0xAA:
+            decoded = insn.Insn(name=insn.InsnName.XOR, operands=[insn.R8.D])
+        # XOR E
+        case 0xAB:
+            decoded = insn.Insn(name=insn.InsnName.XOR, operands=[insn.R8.E])
+        # XOR H
+        case 0xAC:
+            decoded = insn.Insn(name=insn.InsnName.XOR, operands=[insn.R8.H])
+        # XOR L
+        case 0xAD:
+            decoded = insn.Insn(name=insn.InsnName.XOR, operands=[insn.R8.L])
+        # XOR (HL)
+        case 0xAE:
+            decoded = insn.Insn(name=insn.InsnName.XOR, operands=[insn.R8.HL])
+        # XOR A
+        case 0xAF:
+            decoded = insn.Insn(name=insn.InsnName.XOR, operands=[insn.R8.A])
+        # OR B
+        case 0xB0:
+            decoded = insn.Insn(name=insn.InsnName.OR, operands=[insn.R8.B])
+        # OR C
+        case 0xB1:
+            decoded = insn.Insn(name=insn.InsnName.OR, operands=[insn.R8.C])
+        # OR D
+        case 0xB2:
+            decoded = insn.Insn(name=insn.InsnName.OR, operands=[insn.R8.D])
+        # OR E
+        case 0xB3:
+            decoded = insn.Insn(name=insn.InsnName.OR, operands=[insn.R8.E])
+        # OR H
+        case 0xB4:
+            decoded = insn.Insn(name=insn.InsnName.OR, operands=[insn.R8.H])
+        # OR L
+        case 0xB5:
+            decoded = insn.Insn(name=insn.InsnName.OR, operands=[insn.R8.L])
+        # OR (HL)
+        case 0xB6:
+            decoded = insn.Insn(name=insn.InsnName.OR, operands=[insn.R8.HL])
+        # OR A
+        case 0xB7:
+            decoded = insn.Insn(name=insn.InsnName.OR, operands=[insn.R8.A])
+        # CP B
+        case 0xB8:
+            decoded = insn.Insn(name=insn.InsnName.CP, operands=[insn.R8.B])
+        # CP C
+        case 0xB9:
+            decoded = insn.Insn(name=insn.InsnName.CP, operands=[insn.R8.C])
+        # CP D
+        case 0xBA:
+            decoded = insn.Insn(name=insn.InsnName.CP, operands=[insn.R8.D])
+        # CP E
+        case 0xBB:
+            decoded = insn.Insn(name=insn.InsnName.CP, operands=[insn.R8.E])
+        # CP H
+        case 0xBC:
+            decoded = insn.Insn(name=insn.InsnName.CP, operands=[insn.R8.H])
+        # CP L
+        case 0xBD:
+            decoded = insn.Insn(name=insn.InsnName.CP, operands=[insn.R8.L])
+        # CP (HL)
+        case 0xBE:
+            decoded = insn.Insn(name=insn.InsnName.CP, operands=[insn.R8.HL])
+        # CP A
+        case 0xBF:
+            decoded = insn.Insn(name=insn.InsnName.CP, operands=[insn.R8.A])
         # LDH [n], A
         case 0xE0:
             size = 2
