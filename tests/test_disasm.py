@@ -98,7 +98,6 @@ def _assert_decode(data: Iterable[int], expected: insn.Insn) -> None:
 
 
 @pytest.mark.parametrize("name,data", NULLARY_CASES)
-@pytest.mark.skip(reason="not implemented")
 def test_decode_insn__nullary(name: insn.InsnName, data: Iterable[int]) -> None:
     _assert_decode(bytes(data), insn.Insn(name=name))
 
